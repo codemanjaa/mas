@@ -1,4 +1,4 @@
-# SPADE Video Analysis System
+# SPADE V-Agent System
 
 ## Setup the enviornment
 python -m venv spade-venv
@@ -18,6 +18,7 @@ python simple_agent.py
 
 ## TODO 
 -  Remote XMPP server connectivity
+-  Multi agent communication
 -  Input validation for video formats
 -  Dynamic test data generation
 -  Structured analysis reporting
