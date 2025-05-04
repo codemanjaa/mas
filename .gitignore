@@ -1,0 +1,15 @@
+.env
+archive/
+spade-venv/
+pyjabber.db
+# Python
+__pycache__/
+*.py[cod]
+*.log
+venv/
+.env
+.DS_Store
+# SPADE/XMPP
+*.swp
+*.pid
+*.dump
