@@ -1,0 +1,171 @@
+
+1# Redefine the system 
+creator agent has to upload the videos, he would be able to ask suggestions or comments on the Content
+
+create eventagent, summarrizer agent, moderator Agent
+
+belief
+desire
+intention
+
+
+platform enviornment
+yt
+tt
+ig
+
+belief
+plans
+
+videos  resolution
+audience
+ - for raw, authentic, trend-driven content, challenges, dances, lip-syncing, and niche communities, audience is Gen Z preferred platformm is tiktok
+ - Millennials and Gen Z). Content often has a more polished, aesthetic, and lifestyle focus, leveraging Instagram's visual culture
+ - educational snippets, gaming clips, vlogging highlights, and teasers for longer videos.   
+
+Algorithm
+- Viral content
+- trend-driven content
+- connect Shorts to users' viewing habits, give videos longer-term discoverability/ retention
+
+creator
+
+
+
+desire
+
+more likes
+more Viral
+monetization
+branding
+
+
+intention
+
+
+
+belief
+tiktok is a popular platform for gen Z
+ig is a popular platform amongs millenials 
+yt is popular plaform general
+dance video 
+
+
+goal
+
+make the content viral among gen Z
+
+import spade
+from spade.agent import Agent
+from spade.behaviour import OneShotBehaviour, CyclicBehaviour
+from spade.message import Message
+import random
+
+# ================== BDI Constants ==================
+BELIEFS = {
+    'tiktok_popular_genz': True,
+    'ig_popular_millennials': True,
+    'yt_popular_general': True,
+}
+
+DESIRES = {
+    'more_likes': True,
+    'more_viral': True,
+    'monetization': True,
+    'branding': True
+}
+
+INTENTIONS = []  # To be dynamically populated
+
+
+# ================== CreatorAgent (Uploader) ==================
+class CreatorAgent(Agent):
+    class UploadVideoBehaviour(OneShotBehaviour):
+        async def run(self):
+            print("[Creator] Uploading video...")
+            video_info = {
+                'platform': random.choice(['tiktok', 'instagram', 'youtube']),
+                'content_type': 'dance',
+                'audience': 'gen_z'
+            }
+            print(f"[Creator] Uploaded video to {video_info['platform']} for {video_info['audience']}.")
+
+            # Sending request to EventAgent for feedback
+            msg = Message(to="eventagent@localhost")
+            msg.set_metadata("performative", "request")
+            msg.body = str(video_info)
+            await self.send(msg)
+            print("[Creator] Video feedback requested from EventAgent.")
+
+    async def setup(self):
+        print("[Creator] Agent started.")
+        self.add_behaviour(self.UploadVideoBehaviour())
+
+
+# ================== EventAgent (Feedback) ==================
+class EventAgent(Agent):
+    class ReviewVideoBehaviour(CyclicBehaviour):
+        async def run(self):
+            msg = await self.receive(timeout=10)
+            if msg:
+                print("[EventAgent] Reviewing video content...")
+                feedback = "Great video! Could be more engaging for Gen Z."
+                response = Message(to=msg.sender)
+                response.set_metadata("performative", "inform")
+                response.body = feedback
+                await self.send(response)
+
+    async def setup(self):
+        print("[EventAgent] Agent started.")
+        self.add_behaviour(self.ReviewVideoBehaviour())
+
+
+# ================== SummarizerAgent ==================
+class SummarizerAgent(Agent):
+    class SummarizeVideoBehaviour(CyclicBehaviour):
+        async def run(self):
+            msg = await self.receive(timeout=10)
+            if msg:
+                print("[SummarizerAgent] Summarizing video content...")
+                summary = "Highlighting key moments of the video."
+                response = Message(to=msg.sender)
+                response.set_metadata("performative", "inform")
+                response.body = summary
+                await self.send(response)
+
+    async def setup(self):
+        print("[SummarizerAgent] Agent started.")
+        self.add_behaviour(self.SummarizeVideoBehaviour())
+
+
+# ================== ModeratorAgent ==================
+class ModeratorAgent(Agent):
+    class ModerateVideoBehaviour(CyclicBehaviour):
+        async def run(self):
+            msg = await self.receive(timeout=10)
+            if msg:
+                print("[ModeratorAgent] Moderating video content...")
+                moderation_status = "Content is appropriate."
+                response = Message(to=msg.sender)
+                response.set_metadata("performative", "inform")
+                response.body = moderation_status
+                await self.send(response)
+
+    async def setup(self):
+        print("[ModeratorAgent] Agent started.")
+        self.add_behaviour(self.ModerateVideoBehaviour())
+
+
+# ================== Main Function ==================
+if __name__ == "__main__":
+    creator = CreatorAgent("creator@localhost", "creator_password")
+    event = EventAgent("eventagent@localhost", "event_password")
+    summarizer = SummarizerAgent("summarizer@localhost", "summarizer_password")
+    moderator = ModeratorAgent("moderator@localhost", "moderator_password")
+
+    creator.start(auto_register=True)
+    event.start(auto_register=True)
+    summarizer.start(auto_register=True)
+    moderator.start(auto_register=True)
+
+
