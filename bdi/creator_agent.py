@@ -1,10 +1,13 @@
 from bdi_components import Plan
 from base_agent import Agent
+import threading
 
 
 class CreatorAgent(Agent):
     def __init__(self, agent_id="CreatorAgent"):
         super().__init__(agent_id)
+
+        self._stop_event = threading.Event()
         # Initial Beliefs
         self.add_belief("tiktok_popular_genz")
         self.add_belief("instagram_popular_millennials")
@@ -38,6 +41,10 @@ class CreatorAgent(Agent):
         self.add_desire("monetize_content", priority=0.2)
         # Note: Monetization is a complex, long-term goal that would involve many sub-goals and plans.
         # It's included as a desire but not fully implemented in the simulation plans.
+
+    def stop(self):
+        self._stop_event.set()
+        print("The creator agent is stop receving the singnal")
 
     def _build_plan_library(self):
         # Define plans for the Creator Agent

@@ -1,10 +1,12 @@
 from base_agent import Agent
 from bdi_components import Plan
+import threading
 
 
 class AudienceAnalysisAgent(Agent):
     def __init__(self, agent_id="AudienceAnalysisAgent"):
         super().__init__(agent_id)
+        self._stop_event = threading.Event()
         # Initial Beliefs (expanded)
         self.add_belief("audience_demographics(tiktok, genz)")
         self.add_belief("audience_demographics(instagram, millennials_genz)")
@@ -36,6 +38,10 @@ class AudienceAnalysisAgent(Agent):
         self.add_desire(
             "identify_influential_audience_segments(tiktok)", priority=0.9)
         self.add_desire("track_emerging_trends(youtube)", priority=0.85)
+
+    def stop(self):
+        self._stop_event.set()
+        print("The audience analysis agent is stop receving the singnal")
 
     def _build_plan_library(self):
         # Define plans for the Audience Analysis Agent

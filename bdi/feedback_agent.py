@@ -1,10 +1,12 @@
 from base_agent import Agent
 from bdi_components import Plan
+import threading
 
 
 class FeedbackAgent(Agent):
     def __init__(self, agent_id="FeedbackAgent"):
         super().__init__(agent_id)
+        self._stop_event = threading.Event()
         # Feedback Agent primarily reacts to messages/requests
         self.add_belief("feedback_source(tiktok, quick_comments)")
         self.add_belief("feedback_source(youtube, detailed_comments)")
@@ -16,6 +18,10 @@ class FeedbackAgent(Agent):
         self.add_desire("monitor_youtube_feedback(video_id)", priority=0.9)
         self.add_desire("monitor_instagram_feedback(video_id)", priority=0.7)
         self.add_desire("evaluate_feedback_quality(video_id)", priority=0.95)
+
+    def stop(self):
+        self._stop_event.set()
+        print("The feedback agent is stop receving the singnal")
 
     def _build_plan_library(self):
         # Define plans for the Feedback Agent
