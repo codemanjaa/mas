@@ -186,6 +186,9 @@ class BaseBDI_SPADE_Agent(Agent):
         # Event to signal the BDI behaviour to stop
         self._stop_bdi_cycle = threading.Event()
 
+    async def _async_connect(self):
+        await self.client.connect(host=self.jid.host, port=self.xmpp_port)
+
     # --- BDI State Management (Thread-safe access) ---
     # Using properties to expose copies of the internal sets for external access (e.g., monitoring)
     @property
